@@ -20,6 +20,7 @@ Se recomienda el uso de un entorno virtual para instalar los paquetes necesarios
 Instalar los requisitos:
 
 python3 -m pip install torch==2.5.1+cu121 --index-url https://download.pytorch.org/whl/cu121
+
 python3 -m pip install flash-attn==2.7.3 --no-build-isolation
 
 ## Entrenamiento
