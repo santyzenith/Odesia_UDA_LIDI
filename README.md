@@ -23,6 +23,8 @@ python3 -m pip install torch==2.5.1+cu121 --index-url https://download.pytorch.o
 
 python3 -m pip install flash-attn==2.7.3 --no-build-isolation
 
+python3 -m pip install -r requirements.txt
+
 ## Entrenamiento
 Para el entrenamiento se utilizaron 4 x Nvidia A100 40GB.
 
