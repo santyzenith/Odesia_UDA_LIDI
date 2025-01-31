@@ -1,7 +1,7 @@
 # Odesia_UDA_LIDI
  
 # Este repositorio contiene los archivos necesarios para replicar el envío del equipo UDA LIDI
-# en el challenge de ODESIA
+en el challenge de ODESIA
 
 # Requisitos
 # Es necesario contar con un entorno de ejecución con drivers NVIDIA instalados
