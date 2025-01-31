@@ -4,8 +4,14 @@
 
 ## Requisitos
 Para facilitar la recreación, se puede importar una imagen de un contenedor con todos los drivers CUDA a través de enroot
+
+
 "enroot import docker://nvcr.io#nvidia/cuda:12.2.2-devel-ubuntu22.04"
+
+
 "enroot create --name <nombre_contenedor> nvidia+cuda+12.2.2-devel-ubuntu22.04.sqsh"
+
+
 iniciar el entorno: "enroot start  --root --rw <nombre_contenedor>"
 
 
