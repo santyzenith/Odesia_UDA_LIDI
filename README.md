@@ -17,6 +17,11 @@ iniciar el entorno: "enroot start  --root --rw <nombre_contenedor>"
 
 Se recomienda el uso de un entorno virtual para instalar los paquetes necesarios del archivo "requirements.txt"
 
+Instalar los requisitos:
+
+python3 -m pip install torch==2.5.1+cu121 --index-url https://download.pytorch.org/whl/cu121
+python3 -m pip install flash-attn==2.7.3 --no-build-isolation
+
 ## Entrenamiento
 Para el entrenamiento se utilizaron 4 x Nvidia A100 40GB.
 
