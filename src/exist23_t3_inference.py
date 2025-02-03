@@ -18,8 +18,8 @@ set_seed(SEED)
 
 exist23t3_dataset = data_utils.prepare_exist23_t3_test_dataset()
 
-BASE_MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"
-ADAPTER_ID = "santyzenith/Adapter-Llama-3.1-8B-odesia"
+BASE_MODEL_ID = "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
+ADAPTER_ID = "santyzenith/Adapter-DeepSeek-R1-Distill-Llama-8B-odesia"
 OUT_RUN_ID = ADAPTER_ID.split("/")[-1]
 OUT_FILENAME = "EXIST_2023_T3_es"
 OUT_BASE_DIR = Path(__file__).resolve().parent.parent / "results" / "exist_2023"
@@ -37,7 +37,7 @@ base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID,
                                                   quantization_config=bnb_config, 
                                                   torch_dtype=torch.bfloat16, 
                                                   attn_implementation="flash_attention_2", 
-                                                  device_map=2)
+                                                  device_map=0)
 
 tokenizer = AutoTokenizer.from_pretrained(ADAPTER_ID)
 
@@ -58,36 +58,49 @@ def exist23t3_inference(row):
         if "-" in data:
             data["NO"] = data.pop("-")
         
-        return {"value": {'MISOGYNY-NON-SEXUAL-VIOLENCE': data['MISOGYNY-NON-SEXUAL-VIOLENCE'],
-                          'IDEOLOGICAL-INEQUALITY': data['IDEOLOGICAL-INEQUALITY'],
-                          'NO': data['NO'],
-                          'STEREOTYPING-DOMINANCE': data['STEREOTYPING-DOMINANCE'],
-                          'SEXUAL-VIOLENCE': data['SEXUAL-VIOLENCE'],
-                          'OBJECTIFICATION': data['OBJECTIFICATION']}}
+        return {"value": {key: float(data.get(key, 0) or 0) for key in [
+            'MISOGYNY-NON-SEXUAL-VIOLENCE',
+            'IDEOLOGICAL-INEQUALITY',
+            'NO',
+            'STEREOTYPING-DOMINANCE',
+            'SEXUAL-VIOLENCE',
+            'OBJECTIFICATION'
+        ]}}
+
     except Exception as e:
-        print("Json generado no valido...", e)
+        print("Json generado no válido...", e)
         print(answer)
         try:
             print("Intentando recuperar...")
             partial_json = json_repair.repair_json(answer, ensure_ascii=False, skip_json_loads=True)
             data = json5.loads(partial_json)
             print("Recuperado")
-            
-            return {"value": {'MISOGYNY-NON-SEXUAL-VIOLENCE': data['MISOGYNY-NON-SEXUAL-VIOLENCE'],
-                              'IDEOLOGICAL-INEQUALITY': data['IDEOLOGICAL-INEQUALITY'],
-                              'NO': data['NO'],
-                              'STEREOTYPING-DOMINANCE': data['STEREOTYPING-DOMINANCE'],
-                              'SEXUAL-VIOLENCE': data['SEXUAL-VIOLENCE'],
-                              'OBJECTIFICATION': data['OBJECTIFICATION']}}
+
+            if isinstance(data, list):
+                data = data[0]
+
+            if "-" in data:
+                data["NO"] = data.pop("-")
+
+            return {"value": {key: float(data.get(key, 0) or 0) for key in [
+                'MISOGYNY-NON-SEXUAL-VIOLENCE',
+                'IDEOLOGICAL-INEQUALITY',
+                'NO',
+                'STEREOTYPING-DOMINANCE',
+                'SEXUAL-VIOLENCE',
+                'OBJECTIFICATION'
+            ]}}
+        
         except Exception as e:
             print(f"No se pudo recuperar: {e}")
-            
-            return {"value": {'MISOGYNY-NON-SEXUAL-VIOLENCE': 0,
-                              'IDEOLOGICAL-INEQUALITY': 0,
-                              'NO': 0,
-                              'STEREOTYPING-DOMINANCE': 0,
-                              'SEXUAL-VIOLENCE': 0,
-                              'OBJECTIFICATION': 0}}
+            return {"value": {key: 0.0 for key in [
+                'MISOGYNY-NON-SEXUAL-VIOLENCE',
+                'IDEOLOGICAL-INEQUALITY',
+                'NO',
+                'STEREOTYPING-DOMINANCE',
+                'SEXUAL-VIOLENCE',
+                'OBJECTIFICATION'
+            ]}}
 
 if __name__ == "__main__":
     exist23t3_dataset['train'] = exist23t3_dataset['train'].map(exist23t3_inference,

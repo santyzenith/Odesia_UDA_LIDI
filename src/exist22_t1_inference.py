@@ -18,8 +18,8 @@ set_seed(SEED)
 
 exist22t1_dataset = data_utils.prepare_exist22_t1_test_dataset()
 
-BASE_MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"
-ADAPTER_ID = "santyzenith/Adapter-Llama-3.1-8B-odesia"
+BASE_MODEL_ID = "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"
+ADAPTER_ID = "santyzenith/Adapter-DeepSeek-R1-Distill-Llama-8B-odesia"
 OUT_RUN_ID = ADAPTER_ID.split("/")[-1]
 OUT_FILENAME = "EXIST_2022_T1_es"
 OUT_BASE_DIR = Path(__file__).resolve().parent.parent / "results" / "exist_2022"
@@ -37,7 +37,7 @@ base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID,
                                                   quantization_config=bnb_config, 
                                                   torch_dtype=torch.bfloat16, 
                                                   attn_implementation="flash_attention_2", 
-                                                  device_map=0)
+                                                  device_map=2)
 
 tokenizer = AutoTokenizer.from_pretrained(ADAPTER_ID)
 
